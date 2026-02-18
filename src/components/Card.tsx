@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, ViewStyle, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, ViewStyle, TouchableOpacity } from 'react-native';
 import { THEME } from '../theme/theme';
 
 interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
-  variant?: 'default' | 'charcoal' | 'dark' | 'glass';
+  variant?: 'default' | 'surface' | 'outlined' | 'flat';
   onPress?: () => void;
-  padding?: number;
+  padding?: keyof typeof THEME.spacing;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -15,42 +15,34 @@ export const Card: React.FC<CardProps> = ({
   style,
   variant = 'default',
   onPress,
-  padding = THEME.spacing.s16
+  padding = 's16',
 }) => {
   const getBackgroundColor = () => {
     switch (variant) {
-      case 'default': return THEME.colors.card;
-      case 'charcoal': return THEME.colors.cardVariant; // 1c1c1c
-      case 'dark': return THEME.colors.gray800;
-      case 'glass': return 'rgba(255, 255, 255, 0.1)'; // Simple fallback, use BlurView ideally
-      default: return THEME.colors.card;
+      case 'default': return THEME.colors.cardCharcoal;
+      case 'surface': return THEME.colors.cardSurface;
+      case 'flat': return 'transparent';
+      case 'outlined': return 'transparent';
+      default: return THEME.colors.cardCharcoal;
     }
   };
 
-  const containerStyle = {
+  const containerStyle: ViewStyle = {
     backgroundColor: getBackgroundColor(),
     borderRadius: THEME.radius.r16,
-    padding: padding,
-    // Add border for glass look or definition if needed
-    borderWidth: variant === 'glass' ? 1 : 0,
-    borderColor: variant === 'glass' ? 'rgba(255,255,255,0.1)' : 'transparent',
+    padding: THEME.spacing[padding],
+    borderWidth: variant === 'outlined' ? 1 : 0,
+    borderColor: variant === 'outlined' ? THEME.colors.divider : 'transparent',
+    overflow: 'hidden',
   };
 
   if (onPress) {
     return (
-      <TouchableOpacity
-        style={[containerStyle, style]}
-        onPress={onPress}
-        activeOpacity={0.8}
-      >
+      <TouchableOpacity activeOpacity={0.9} onPress={onPress} style={[containerStyle, style]}>
         {children}
       </TouchableOpacity>
     );
   }
 
-  return (
-    <View style={[containerStyle, style]}>
-      {children}
-    </View>
-  );
+  return <View style={[containerStyle, style]}>{children}</View>;
 };

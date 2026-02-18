@@ -1,54 +1,16 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, FlatList, Image } from 'react-native';
-import { ScreenContainer } from '../../src/components/ScreenContainer';
-import { Typography } from '../../src/components/Typography';
-import { Card } from '../../src/components/Card';
-import { Icon } from '../../src/components/Icon';
-import { Button } from '../../src/components/Button';
-import { THEME } from '../../src/theme/theme';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import { View, ScrollView, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
+import { THEME } from '../../src/theme/theme';
+import { Typography } from '../../src/components/Typography';
+import { Chip } from '../../src/components/Chip';
+import { Icon } from '../../src/components/Icon';
+import { ScreenContainer } from '../../src/components/ScreenContainer';
 
-const JOB_DATA = [
-  {
-    id: '1',
-    company: 'Google',
-    role: 'Senior Software Engineer',
-    location: 'Mountain View, CA',
-    logoColor: '#ffffff',
-    icon: 'google', // specialized icon or placeholder
-    iconColor: '#4285F4',
-  },
-  {
-    id: '2',
-    company: 'Amazon',
-    role: 'Cloud Infrastructure Lead',
-    location: 'Seattle, WA',
-    logoColor: '#000000',
-    icon: 'amazon', // placeholder
-    iconColor: '#ffffff',
-  },
-  {
-    id: '3',
-    company: 'Meta',
-    role: 'Full Stack Developer',
-    location: 'Menlo Park, CA',
-    logoColor: '#0668E1',
-    icon: 'facebook',
-    iconColor: '#ffffff',
-  },
-  {
-    id: '4',
-    company: 'Netflix',
-    role: 'Backend Engineer',
-    location: 'Los Gatos, CA',
-    logoColor: '#E50914',
-    icon: 'movie', // placeholder
-    iconColor: '#ffffff',
-  },
-];
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = width * 0.85;
 
-export default function JobSearchScreen() {
+export default function DiscoveryScreen() {
   const router = useRouter();
 
   const handleJobPress = (id: string) => {
@@ -57,157 +19,332 @@ export default function JobSearchScreen() {
 
   return (
     <ScreenContainer>
-      <View style={styles.headerContainer}>
-        {/* Search Bar */}
-        <View style={styles.searchBar}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Icon name="search" color={THEME.colors.textSecondary} style={{ marginRight: 12 }} />
-            <Typography variant="bodyLarge" style={{ fontWeight: '500' }}>Software Engineer</Typography>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.profileContainer}>
+          <View style={styles.avatarWrapper}>
+            <Image
+              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBNO3m0uuMzGzy2ZMEduDXqKTwJ-pBMuDbV4FqHzLZN-f5NGUrjRVaaDxHVyoVgR3fQZa9QZO9eXMmFIj8aXMhza_dLv2YS3ntHKf3-ZhQTHbDJE7KIDJT_TALzHASTtOcBV-3J2YRET4HUuNksk2A0OjytIBUCuIOfsnlKjAvkEdiD4-805qllJUDIz2sfJyNnTfQ78scQR9Rflcg_XqMh1uO7yESeLKHdLuYvPt_XAPs3WhxBwfG81Z2nDNoNU2TOYqwRemYStTU_' }}
+              style={styles.avatar}
+            />
+            <View style={styles.cameraIcon}>
+              <Icon name="photo-camera" size={14} color="white" />
+            </View>
           </View>
-          <Icon name="tune" color={THEME.colors.textSecondary} />
+          <View style={styles.profileInfo}>
+            <Typography variant="headlineMedium">Anshul Badoni</Typography>
+            <TouchableOpacity style={styles.emailContainer}>
+              <Typography variant="bodyMedium">anshulbadoni359@gmail.com</Typography>
+              <Icon name="expand-more" size={16} color={THEME.colors.textSecondary} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Filter Chips */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.chipScroll}
-          contentContainerStyle={styles.chipContent}
-        >
-          {['Remote', 'Full-time', 'Salary', 'Entry level', 'Senior'].map((filter) => (
-            <TouchableOpacity key={filter} style={styles.filterChip}>
-              <Typography variant="labelSmall" style={styles.filterText}>{filter}</Typography>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        {/* Horizontal Cards */}
+        <View style={styles.carouselSection}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={CARD_WIDTH + 12} // Card width + gap
+            decelerationRate="fast"
+            contentContainerStyle={styles.carouselContent}
+          >
+            {/* Active Role Card */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[styles.roleCard, { backgroundColor: THEME.colors.yellowMaterial }]}
+            >
+              <View style={styles.cardHeader}>
+                <View style={styles.logoCircleWhite}>
+                  <Icon name="code" size={28} color="black" />
+                </View>
+                <View style={styles.badgeBlack}>
+                  <Typography variant="labelSmall" style={{ color: 'white', fontSize: 10 }}>ACTIVE ROLE</Typography>
+                </View>
+              </View>
+              <View style={{ marginTop: 16 }}>
+                <Typography variant="displayMedium" style={{ color: 'black' }}>Software Engineer</Typography>
+                <View style={styles.roleMeta}>
+                  <Typography variant="bodyLarge" style={{ color: 'rgba(0,0,0,0.9)', fontWeight: 'bold' }}>Tech Corp</Typography>
+                  <View style={styles.dotSeparator} />
+                  <Typography variant="bodyMedium" style={{ color: 'rgba(0,0,0,0.8)', fontWeight: 'bold' }}>5+ Years Exp.</Typography>
+                </View>
+              </View>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
 
-        <View style={styles.section}>
-          <Typography variant="titleLarge" style={styles.sectionTitle}>Recommended Jobs</Typography>
+            {/* Target Role Card */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={[styles.roleCard, { backgroundColor: THEME.colors.bluePrimary }]}
+            >
+              <View style={styles.cardHeader}>
+                <View style={[styles.logoCircleWhite, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+                  <Icon name="terminal" size={28} color="white" />
+                </View>
+                <View style={[styles.badgeBlack, { backgroundColor: 'rgba(0,0,0,0.2)' }]}>
+                  <Typography variant="labelSmall" style={{ color: 'white', fontSize: 10 }}>TARGET ROLE</Typography>
+                </View>
+              </View>
+              <View style={{ marginTop: 16 }}>
+                <Typography variant="displayMedium" style={{ color: 'white' }}>Senior Tech Lead</Typography>
+                <View style={styles.roleMeta}>
+                  <Typography variant="bodyLarge" style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'bold' }}>Strategic Vision</Typography>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </ScrollView>
 
-          <View style={styles.jobList}>
-            {JOB_DATA.map((job, index) => (
-              <Animated.View key={job.id} entering={FadeInDown.delay(index * 100).springify()}>
-                <TouchableOpacity onPress={() => handleJobPress(job.id)} activeOpacity={0.7}>
-                  <Card variant="default" style={styles.jobCard}>
-                    <View style={styles.jobRow}>
-                      <View style={styles.jobInfo}>
-                        <View style={[styles.logoContainer, { backgroundColor: job.logoColor }]}>
-                          {/* Using generic icons as placeholders for company logos */}
-                          {job.company === 'Google' && <Icon name="search" size={24} color={job.iconColor} />}
-                          {job.company === 'Amazon' && <Icon name="shopping-cart" size={24} color={job.iconColor} />}
-                          {job.company === 'Meta' && <Icon name="facebook" size={24} color={job.iconColor} />}
-                          {job.company === 'Netflix' && <Typography style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }}>N</Typography>}
-                        </View>
-                        <View>
-                          <Typography variant="bodyLarge" style={{ fontWeight: 'bold', marginBottom: 2 }}>
-                            {job.role}
-                          </Typography>
-                          <Typography variant="labelSmall" style={{ textTransform: 'none' }}>
-                            {job.company} • {job.location}
-                          </Typography>
-                        </View>
-                      </View>
-                      <Button
-                        title="Quick Apply"
-                        variant="tonal"
-                        style={styles.applyButton}
-                        textStyle={{ color: THEME.colors.blueTonalText, fontSize: 13 }}
-                        onPress={() => {}}
-                      />
-                    </View>
-                  </Card>
-                </TouchableOpacity>
-              </Animated.View>
-            ))}
+          {/* Indicators */}
+          <View style={styles.indicators}>
+            <View style={[styles.indicator, { backgroundColor: 'white' }]} />
+            <View style={[styles.indicator, { backgroundColor: 'rgba(255,255,255,0.2)' }]} />
           </View>
         </View>
 
-        {/* Padding for Bottom Tab Bar */}
-        <View style={{ height: 100 }} />
+        {/* Recommended Jobs */}
+        <View style={styles.section}>
+          <Typography variant="titleLarge" style={styles.sectionTitle}>Recommended Jobs</Typography>
+          <View style={styles.jobList}>
+            <JobItem
+              company="Google"
+              role="Senior Software Engineer"
+              location="Mountain View, CA"
+              logoIcon="language" // Using generic icon as Google logo fallback
+              logoColor="#4285F4"
+              onPress={() => handleJobPress('google')}
+            />
+            <JobItem
+              company="Amazon"
+              role="Cloud Infrastructure Lead"
+              location="Seattle, WA"
+              logoIcon="shopping-cart"
+              logoColor="#FF9900"
+              onPress={() => handleJobPress('amazon')}
+            />
+            <JobItem
+              company="Meta"
+              role="Full Stack Developer"
+              location="Menlo Park, CA"
+              logoIcon="groups"
+              logoColor="#0668E1"
+              onPress={() => handleJobPress('meta')}
+            />
+          </View>
+        </View>
+
+        {/* Skills */}
+        <View style={styles.section}>
+          <Typography variant="titleLarge" style={styles.sectionTitle}>Skills</Typography>
+          <View style={styles.skillsContainer}>
+            <View style={styles.skillsWrapper}>
+              <Chip label="Flutter" icon="flutter-dash" variant="filled" color={THEME.colors.blueTonal} textColor={THEME.colors.blueTonalText} />
+              <Chip label="React" icon="code" variant="filled" color={THEME.colors.cyanTonal} textColor={THEME.colors.cyanTonalText} />
+              <Chip label="Python" icon="terminal" variant="filled" color={THEME.colors.yellowTonal} textColor={THEME.colors.yellowTonalText} />
+              <Chip label="Add Skill" icon="add" variant="outlined" textColor={THEME.colors.textSecondary} />
+            </View>
+          </View>
+        </View>
+
+        {/* Certifications */}
+        <View style={styles.section}>
+          <Typography variant="titleLarge" style={styles.sectionTitle}>Certifications</Typography>
+          <TouchableOpacity style={styles.certItem}>
+            <View style={styles.certIcon}>
+              <Icon name="verified" size={28} color={THEME.colors.blueTonalText} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Typography variant="titleMedium" style={{ fontWeight: 'bold' }}>Cloud Professional</Typography>
+              <Typography variant="bodyMedium">Jan 2024</Typography>
+            </View>
+            <Icon name="open-in-new" size={20} color={THEME.colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+
       </ScrollView>
     </ScreenContainer>
   );
 }
 
+const JobItem = ({ company, role, location, logoIcon, logoColor, onPress }: any) => (
+  <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.jobItem}>
+    <View style={styles.jobContent}>
+      <View style={styles.jobLogo}>
+        <Icon name={logoIcon} size={24} color={logoColor} />
+      </View>
+      <View>
+        <Typography variant="titleMedium" style={{ fontSize: 15, fontWeight: '500' }}>{role}</Typography>
+        <Typography variant="labelSmall" style={{ marginTop: 2 }}>{company} • {location}</Typography>
+      </View>
+    </View>
+    <View style={styles.quickApplyBtn}>
+      <Typography style={{ color: THEME.colors.blueTonalText, fontSize: 12, fontWeight: 'bold' }}>Quick Apply</Typography>
+    </View>
+  </TouchableOpacity>
+);
+
 const styles = StyleSheet.create({
-  headerContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+  header: {
+    paddingHorizontal: 24,
+    paddingVertical: 24,
   },
-  searchBar: {
+  profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: THEME.colors.cardVariant,
-    borderRadius: 30,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
   },
-  scrollContent: {
-    // paddingHorizontal: 16,
+  avatarWrapper: {
+    position: 'relative',
   },
-  chipScroll: {
-    maxHeight: 50,
-    marginBottom: 24,
+  avatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
   },
-  chipContent: {
+  cameraIcon: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    backgroundColor: '#1c1c1c',
+    borderRadius: 12,
+    padding: 4,
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  profileInfo: {
+    marginLeft: 16,
+  },
+  emailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  carouselSection: {
+    marginBottom: 32,
+  },
+  carouselContent: {
     paddingHorizontal: 16,
-    gap: 8,
-  },
-  filterChip: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    height: 36,
-    justifyContent: 'center',
-  },
-  filterText: {
-    color: THEME.colors.textPrimary,
-    textTransform: 'none',
-    fontWeight: '500',
-  },
-  section: {
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    marginBottom: 16,
-    paddingLeft: 8,
-  },
-  jobList: {
     gap: 12,
   },
-  jobCard: {
-    marginBottom: 0,
-  },
-  jobRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  roleCard: {
+    width: CARD_WIDTH,
+    minHeight: 160,
+    borderRadius: 16,
+    padding: 24,
     justifyContent: 'space-between',
   },
-  jobInfo: {
+  cardHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    marginRight: 8,
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
-  logoContainer: {
+  logoCircleWhite: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    justifyContent: 'center',
+    backgroundColor: 'white',
     alignItems: 'center',
-    marginRight: 16,
+    justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: 'rgba(0,0,0,0.05)',
   },
-  applyButton: {
+  badgeBlack: {
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  roleMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    gap: 8,
+  },
+  dotSeparator: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  indicators: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: 12,
+  },
+  indicator: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  section: {
+    paddingHorizontal: 16,
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    marginLeft: 8,
+    marginBottom: 16,
+  },
+  jobList: {
+    backgroundColor: THEME.colors.cardCharcoal,
+    borderRadius: 16,
+    padding: 8,
+    gap: 8,
+  },
+  jobItem: {
+    backgroundColor: THEME.colors.cardSurface,
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  jobContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  jobLogo: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  quickApplyBtn: {
     backgroundColor: THEME.colors.blueTonal,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    height: 36,
+    borderRadius: 16,
+  },
+  skillsContainer: {
+    backgroundColor: THEME.colors.cardVariant,
+    borderRadius: 16,
+    padding: 20,
+  },
+  skillsWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  certItem: {
+    backgroundColor: THEME.colors.cardVariant,
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  certIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
   },
 });

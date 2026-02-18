@@ -1,114 +1,81 @@
 import React from 'react';
-import { View, StyleSheet, Image, ImageSourcePropType } from 'react-native';
-import { Typography } from './Typography';
+import { View, ViewStyle, Image, ImageStyle } from 'react-native';
 import { THEME } from '../theme/theme';
+import { Typography } from './Typography';
 
-export interface TimelineItemProps {
-  logo?: string; // URL
-  title: string;
+interface TimelineItemProps {
   company: string;
-  duration: string;
+  role: string;
+  date: string;
   description: string;
+  logoUrl: string;
   isLast?: boolean;
 }
 
 export const TimelineItem: React.FC<TimelineItemProps> = ({
-  logo,
-  title,
   company,
-  duration,
+  role,
+  date,
   description,
-  isLast = false
+  logoUrl,
+  isLast = false,
 }) => {
   return (
-    <View style={styles.container}>
+    <View style={{ flexDirection: 'row', marginBottom: 24, position: 'relative' }}>
       {/* Connector Line */}
-      {!isLast && <View style={styles.connector} />}
+      {!isLast && (
+        <View
+          style={{
+            position: 'absolute',
+            left: 28, // Center of the circle (56/2)
+            top: 56,
+            bottom: -24, // Connect to next item
+            width: 2,
+            backgroundColor: THEME.colors.greenTimeline,
+            zIndex: 0,
+          }}
+        />
+      )}
 
-      {/* Logo Node */}
-      <View style={styles.logoContainer}>
-        {logo ? (
-          <Image source={{ uri: logo }} style={styles.logo} resizeMode="contain" />
-        ) : (
-          <View style={styles.placeholderLogo} />
-        )}
+      {/* Logo Circle */}
+      <View
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          backgroundColor: 'white',
+          borderWidth: 3,
+          borderColor: THEME.colors.greenTimeline,
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          zIndex: 1,
+        }}
+      >
+        <Image
+          source={{ uri: logoUrl }}
+          style={{ width: '100%', height: '100%' } as ImageStyle}
+          resizeMode="cover"
+        />
       </View>
 
       {/* Content */}
-      <View style={styles.content}>
-        <Typography variant="titleMedium" style={styles.title}>{title}</Typography>
-        <View style={styles.metaContainer}>
-          <Typography variant="bodyMedium" style={styles.company}>{company}</Typography>
-          <Typography variant="labelSmall" style={styles.duration}>{duration}</Typography>
+      <View style={{ flex: 1, marginLeft: 20, paddingTop: 4 }}>
+        <Typography variant="titleMedium" style={{ fontWeight: '700', color: 'white' }}>
+          {role}
+        </Typography>
+        <View style={{ marginTop: 2, marginBottom: 8 }}>
+          <Typography variant="labelLarge" style={{ color: THEME.colors.greenMaterial }}>
+            {company}
+          </Typography>
+          <Typography variant="labelSmall" style={{ opacity: 0.8, marginTop: 2 }}>
+            {date}
+          </Typography>
         </View>
-        <Typography variant="bodyMedium" style={styles.description}>
+        <Typography variant="bodyMedium" style={{ lineHeight: 22 }}>
           {description}
         </Typography>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    marginBottom: THEME.spacing.s40, // Reduced from design which seems large
-    position: 'relative',
-  },
-  connector: {
-    position: 'absolute',
-    top: 56, // below logo
-    left: 27, // center of 56px logo (approx) -> 28 - 1.5 = 26.5
-    width: 3,
-    bottom: -40, // extend to next item
-    backgroundColor: THEME.colors.greenTimeline,
-    zIndex: 0,
-  },
-  logoContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: THEME.colors.white,
-    borderWidth: 3,
-    borderColor: THEME.colors.greenTimeline,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    zIndex: 1,
-  },
-  logo: {
-    width: '100%',
-    height: '100%',
-  },
-  placeholderLogo: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#ddd',
-  },
-  content: {
-    flex: 1,
-    marginLeft: THEME.spacing.s20,
-    paddingTop: 4,
-  },
-  title: {
-    fontWeight: 'bold',
-    marginBottom: 2,
-    color: THEME.colors.white,
-  },
-  metaContainer: {
-    marginBottom: 8,
-  },
-  company: {
-    color: THEME.colors.greenLight,
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  duration: {
-    color: THEME.colors.textSecondary,
-    opacity: 0.8,
-  },
-  description: {
-    lineHeight: 22,
-    color: THEME.colors.textSecondary,
-  },
-});

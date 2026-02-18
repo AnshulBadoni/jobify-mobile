@@ -21,11 +21,10 @@ export default function RootLayout() {
     <>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="review/index" options={{ presentation: 'card' }} />
-        <Stack.Screen name="professional-profile/index" options={{ presentation: 'card' }} />
         <Stack.Screen name="job/[id]" options={{ presentation: 'card' }} />
-        <Stack.Screen name="discovery/index" options={{ presentation: 'card' }} />
       </Stack>
     </>
   );
