@@ -1,90 +1,81 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { TouchableOpacity, ViewStyle, TextStyle, View } from 'react-native';
+import { THEME } from '../theme/theme';
 import { Typography } from './Typography';
 import { Icon } from './Icon';
-import { THEME } from '../theme/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 
 interface ChipProps {
   label: string;
-  icon?: keyof typeof MaterialIcons.glyphMap;
   selected?: boolean;
   onPress?: () => void;
-  variant?: 'filled' | 'outlined' | 'tonal';
+  icon?: keyof typeof MaterialIcons.glyphMap;
+  variant?: 'filled' | 'outlined' | 'tonal' | 'filter';
   color?: string; // override color
   textColor?: string; // override text color
-  style?: ViewStyle;
 }
 
 export const Chip: React.FC<ChipProps> = ({
   label,
-  icon,
   selected = false,
   onPress,
-  variant = 'tonal',
+  icon,
+  variant = 'filled',
   color,
   textColor,
-  style
 }) => {
-  // Determine background color
-  let backgroundColor = THEME.colors.gray700; // default tonal
-  let finalTextColor = THEME.colors.textPrimary;
-  let borderColor = 'transparent';
+  const getBackgroundColor = () => {
+    if (selected) return THEME.colors.greenMaterial;
+    if (color) return color;
+    switch (variant) {
+      case 'filled': return THEME.colors.tonalGreyBlue;
+      case 'tonal': return THEME.colors.tonalSurface;
+      case 'filter': return selected ? THEME.colors.greenMaterial : THEME.colors.tonalGreyBlue;
+      case 'outlined': return 'transparent';
+      default: return THEME.colors.tonalGreyBlue;
+    }
+  };
 
-  if (variant === 'filled') {
-    backgroundColor = selected ? THEME.colors.primary : THEME.colors.gray700;
-    finalTextColor = selected ? THEME.colors.onPrimary : THEME.colors.textPrimary;
-  } else if (variant === 'outlined') {
-    backgroundColor = 'transparent';
-    borderColor = THEME.colors.divider;
-    finalTextColor = THEME.colors.textSecondary;
-  } else if (variant === 'tonal') {
-      // Use color prop if provided (e.g. for specific skill chips like "blueTonal")
-      backgroundColor = color || THEME.colors.gray700;
-      finalTextColor = textColor || THEME.colors.textPrimary;
-  }
+  const getTextColor = () => {
+    if (selected) return THEME.colors.textOnGreen;
+    if (textColor) return textColor;
+    switch (variant) {
+      case 'filled': return THEME.colors.textPrimary; // or chipText
+      case 'tonal': return THEME.colors.textSecondary;
+      case 'filter': return selected ? THEME.colors.textOnGreen : THEME.colors.textPrimary;
+      case 'outlined': return THEME.colors.textPrimary;
+      default: return THEME.colors.chipText;
+    }
+  };
+
+  const containerStyle: ViewStyle = {
+    backgroundColor: getBackgroundColor(),
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: THEME.radius.full,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: variant === 'outlined' ? 1 : 0,
+    borderColor: variant === 'outlined' ? THEME.colors.divider : 'transparent',
+    alignSelf: 'flex-start',
+  };
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.container,
-        { backgroundColor, borderColor, borderWidth: variant === 'outlined' ? 1 : 0 },
-        style
-      ]}
-      onPress={onPress}
-      activeOpacity={0.7}
-      disabled={!onPress}
-    >
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={containerStyle}>
       {icon && (
         <Icon
           name={icon}
-          size={18}
-          color={finalTextColor}
-          style={styles.icon}
+          size={16}
+          color={getTextColor()}
+          style={{ marginRight: 6 }}
         />
       )}
       <Typography
-        variant="labelSmall"
-        style={{ color: finalTextColor, fontSize: 13, textTransform: 'none', fontWeight: '500' }}
+        variant="labelMedium"
+        style={{ color: getTextColor(), fontWeight: '500', fontSize: 13 }}
       >
         {label}
       </Typography>
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: THEME.radius.full,
-    alignSelf: 'flex-start',
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  icon: {
-    marginRight: 6,
-  },
-});

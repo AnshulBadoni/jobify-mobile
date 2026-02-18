@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, ViewStyle, TextStyle, ActivityIndicator } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { Pressable, ViewStyle, TextStyle, ActivityIndicator, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { THEME } from '../theme/theme';
 import { Typography } from './Typography';
+import { Icon } from './Icon';
 import { MaterialIcons } from '@expo/vector-icons';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'tonal' | 'outline';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'tonal' | 'outline' | 'tonalGreen' | 'tonalBlue';
 
 interface ButtonProps {
   title?: string;
@@ -51,11 +52,13 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const getBackgroundColor = () => {
-    if (disabled) return THEME.colors.gray600;
+    if (disabled) return THEME.colors.divider;
     switch (variant) {
-      case 'primary': return THEME.colors.primary;
-      case 'secondary': return THEME.colors.secondary;
-      case 'tonal': return THEME.colors.gray700;
+      case 'primary': return THEME.colors.primary; // Green
+      case 'secondary': return THEME.colors.secondary; // Blue
+      case 'tonal': return THEME.colors.tonalSurface;
+      case 'tonalGreen': return THEME.colors.greenTonal;
+      case 'tonalBlue': return THEME.colors.blueTonal;
       case 'outline': return 'transparent';
       case 'ghost': return 'transparent';
       default: return THEME.colors.primary;
@@ -65,18 +68,20 @@ export const Button: React.FC<ButtonProps> = ({
   const getTextColor = () => {
     if (disabled) return THEME.colors.textSecondary;
     switch (variant) {
-      case 'primary': return THEME.colors.onPrimary;
-      case 'secondary': return THEME.colors.onSecondary;
-      case 'tonal': return THEME.colors.textPrimary; // or tonal text color
+      case 'primary': return THEME.colors.textOnGreen;
+      case 'secondary': return THEME.colors.textOnBlue;
+      case 'tonal': return THEME.colors.textPrimary;
+      case 'tonalGreen': return THEME.colors.greenMaterial;
+      case 'tonalBlue': return THEME.colors.blueTonalText;
       case 'outline': return THEME.colors.textPrimary;
       case 'ghost': return THEME.colors.textPrimary;
-      default: return THEME.colors.black;
+      default: return THEME.colors.deepBlack;
     }
   };
 
   const containerStyle: ViewStyle = {
     backgroundColor: getBackgroundColor(),
-    paddingVertical: THEME.spacing.s16, // Matches Figma 16px roughly (or 14px padding)
+    paddingVertical: THEME.spacing.s16,
     paddingHorizontal: THEME.spacing.s24,
     borderRadius: THEME.radius.full,
     flexDirection: 'row',
@@ -100,7 +105,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <>
           {icon && (
-            <MaterialIcons
+            <Icon
               name={icon}
               size={20}
               color={getTextColor()}
@@ -110,7 +115,7 @@ export const Button: React.FC<ButtonProps> = ({
           {title && (
             <Typography
               variant="labelLarge"
-              style={[{ color: getTextColor(), fontWeight: 'bold' }, textStyle]}
+              style={[{ color: getTextColor(), fontWeight: '700' }, textStyle]}
             >
               {title}
             </Typography>
